@@ -13,7 +13,7 @@ object CsvEncoder {
   // if someone wants to create just instance of encoder
   def apply[A](implicit enc: CsvEncoder[A]): CsvEncoder[A] = enc
 
-  // "constructor" or "pure" (needed for shapeless HList pattern match)
+  // "constructor" or "pure" (to avoid always making anonymous class)
   private def constructEncoder[A](e: A => List[String]): CsvEncoder[A] = a => e(a)
 
   // primitive encoders
