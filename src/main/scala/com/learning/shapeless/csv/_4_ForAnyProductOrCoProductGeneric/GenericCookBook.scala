@@ -1,4 +1,4 @@
-package com.learning.shapeless.csv._4_ForAnyProductGeneric
+package com.learning.shapeless.csv._4_ForAnyProductOrCoProductGeneric
 
 import shapeless.{:+:, ::, Coproduct, Generic, HList, HNil, Inl, Inr, Lazy, T}
 
@@ -39,7 +39,7 @@ object CsvEncoder {
   //  “A or B or C”, where :+: can be loosely interpreted as Either. The overall type
   //  of a coproduct encodes all the possible types in the disjunction on, but each con-
   //  crete instance contains a value for just ONE of the possibilities.
-  implicit def cconsEncoder[HEAD, TAIL <: Coproduct](
+  implicit def cConsEncoder[HEAD, TAIL <: Coproduct](
     implicit
     hEncoder: Lazy[CsvEncoder[HEAD]],
     tEncoder: CsvEncoder[TAIL]
