@@ -49,14 +49,14 @@ object CsvEncoder {
       case Inr(t) => tEncoder.encode(t)
     }
 
-  // for case class A uses shapeless HList r R
-  // creates encoder for R
+  // for case class A uses shapeless HList's representation R
+  // and creates encoder for R
   implicit def genericEncoder[A, R](
     implicit
     gen: Generic.Aux[A, R],
     rEnc: Lazy[CsvEncoder[R]]
   ): CsvEncoder[A] =
-  // encoder is a object that can do A => List[String]
+  // encoder is just an object that can do A => List[String]
     constructEncoder(a => {
       val r = gen.to(a)
       rEnc.value.encode(r)
@@ -84,7 +84,6 @@ object Main {
 
     println(csvRows)
     println(csvROws2)
-
 
     val myClassEncoder = CsvEncoder[MyClass3]
     println(myClassEncoder.encode(MyClass3("a", false, 1)))
