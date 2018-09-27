@@ -1,6 +1,6 @@
 package com.learning.shapeless.csv._4_ForAnyProductGeneric
 
-import shapeless.{::, Generic, HList, HNil, Lazy}
+import shapeless.{:+:, ::, Coproduct, Generic, HList, HNil, Inl, Inr, Lazy, T}
 
 
 trait CsvEncoder[A] {
@@ -25,13 +25,28 @@ object CsvEncoder {
   implicit val hNilEncoder: CsvEncoder[HNil] = constructEncoder(hNil => List())
 
   // split implicit resolution to two sparts
-  implicit def hListEncoder[HEAD, TAIL <: HList](
+  implicit def hConsEncoder[HEAD, TAIL <: HList](
     implicit
     hEncoder: Lazy[CsvEncoder[HEAD]],
     tEncoder: CsvEncoder[TAIL]
   ): CsvEncoder[HEAD :: TAIL] =
     constructEncoder {
       case h :: t => hEncoder.value.encode(h) ++ tEncoder.encode(t) // concatenate List(str) ++ List(int) ++ List()
+    }
+
+  // move forward with implicit resolution in one direction (either in left or right)
+  // In general coproducts take the form A :+: B :+: C :+: CNil meaning
+  //  “A or B or C”, where :+: can be loosely interpreted as Either. The overall type
+  //  of a coproduct encodes all the possible types in the disjunction on, but each con-
+  //  crete instance contains a value for just ONE of the possibilities.
+  implicit def cconsEncoder[HEAD, TAIL <: Coproduct](
+    implicit
+    hEncoder: Lazy[CsvEncoder[HEAD]],
+    tEncoder: CsvEncoder[TAIL]
+  ): CsvEncoder[HEAD :+: TAIL] =
+    constructEncoder {
+      case Inl(h) => hEncoder.value.encode(h)
+      case Inr(t) => tEncoder.encode(t)
     }
 
   // for case class A uses shapeless HList r R

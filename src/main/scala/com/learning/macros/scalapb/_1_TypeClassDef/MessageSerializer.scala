@@ -1,4 +1,4 @@
-package com.learning.shapeless.scalapb._1_TypeClassDef
+package com.learning.macros.scalapb._1_TypeClassDef
 
 import com.google.protobuf.CodedOutputStream
 import shapeless.{::, Generic, HList, HNil, Lazy}
@@ -52,13 +52,27 @@ object MessageSerializer {
   ): MessageSerializer[HEAD :: TAIL] = new MessageSerializer[HEAD :: TAIL] {
     def writeTo(output: CodedOutputStream, hList: HEAD :: TAIL): Unit = hList match {
       case h :: t =>
-      //output.write hSerializer.value.writeTo(h)
+        hSerializer.value.writeTo(output, h)
+        tSerializer.writeTo(output,)
     }
 
     def serializedSize(hList: HEAD :: TAIL): Int = hList match {
-      case h :: t =>
+      case h :: t => hSerializer.value.si
     }
+
+    def genericSerializer[T, R](
+      implicit
+      gen: Generic[T],
+      rSer: Lazy[MessageSerializer[T]]
+    ): MessageSerializer[T] = {
+      null
+    }
+
+
   }
 
 
 }
+
+// todo with shapeless I can have field serializer
+// todo with macros I could have full message serializer

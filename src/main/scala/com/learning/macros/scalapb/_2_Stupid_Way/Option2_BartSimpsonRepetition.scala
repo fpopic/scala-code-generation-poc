@@ -1,8 +1,8 @@
-package com.learning.shapeless.scalapb._2_stupid
+package com.learning.macros.scalapb._2_Stupid_Way
 
 import com.google.protobuf.CodedOutputStream
-import com.learning.shapeless.scalapb.Person
-import com.learning.shapeless.scalapb._1_TypeClassDef.MessageSerializer
+import com.learning.macros.scalapb.Person
+import com.learning.macros.scalapb._1_TypeClassDef.MessageSerializer
 
 object Option2_BartSimpsonRepetition {
 
