@@ -3,6 +3,15 @@ package com.learning.shapeless.csv._4_ForAnyProductOrCoProductGeneric
 import shapeless.{:+:, ::, Coproduct, Generic, HList, HNil, Inl, Inr, Lazy, T}
 
 
+// Given a set of rules encoded as implicit vals and implicit defs, the compiler is
+//  capable of searching for combinations to give it the required instances.
+// This behaviour, known as “implicit resolution”, is what makes the type class
+//  pattern so powerful in Scala.
+// Even with this power, the compiler can’t pull apart our case classes and sealed
+//  traits. We are required to define instances for ADTs by hand. Shapeless’
+//  generic representations change all of this, allowing us to derive instances for
+//  any ADT for free.
+
 trait CsvEncoder[A] {
   def encode(a: A): List[String]
 }
