@@ -3,14 +3,14 @@ package com.github.fpopic
 import scala.language.experimental.macros
 import scala.reflect.macros.blackbox
 
-object Learning {
+object NoParamsPrintln {
 
   // I want to generate method with 0 params and return type Unit
-  def hello(): Unit = macro hello_impl
+  def hello(): Unit = macro helloImpl
 
   // (Context)(params of method) : Expr[Type of method]
   // c.Expr is Scala code with some type
-  def hello_impl(c: blackbox.Context)(): c.Expr[Unit] = {
+  def helloImpl(c: blackbox.Context)(): c.Expr[Unit] = {
     // needed to get AST objects
     import c.universe._
 
@@ -23,3 +23,6 @@ object Learning {
   }
 
 }
+
+// you can check bytecode by
+// javap -c usage/target/.....\
