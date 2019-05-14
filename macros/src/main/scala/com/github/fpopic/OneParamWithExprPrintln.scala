@@ -10,9 +10,22 @@ object OneParamWithExprPrintln {
   def helloDebugImpl(c: blackbox.Context)(param: c.Expr[Any]): c.Expr[Unit] = {
     import c.universe._
 
+    // show() Renders a representation of a reflection artifact as desugared Scala code.
+    val paramRepr: String = show(param.tree)
+
+    // We generate Tree manually using tree case classes
+    val paramRepTree: Literal = Literal(Constant(paramRepr))
+
+    // Let's make an expr of tree we just generated
+    val paramRepExpr = c.Expr[String](paramRepTree)
+
     // Use `reify` to produce the abstract syntax tree representing a given Scala expression.
+    // Use `splice` to turn an expr of type Expr[T] into a value of type T
     reify {
-      println(param.splice)
+      // Print: expr = value
+      // expr: we just splice the expr
+      // value: we just splice the given param
+      println(paramRepExpr.splice + " = " + param.splice)
     }
   }
 
