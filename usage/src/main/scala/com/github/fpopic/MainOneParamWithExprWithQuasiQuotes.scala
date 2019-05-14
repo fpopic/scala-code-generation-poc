@@ -4,7 +4,7 @@ object MainOneParamWithExprWithQuasiQuotes {
 
   def main(args: Array[String]): Unit = {
     val x = 10
-    OneParamWithExprPrintlnQuasiQyotes.helloDebug(x + 1)
+    OneParamWithExprPrintlnQuasiQuotes.helloDebug(x + 1)
   }
 
 }

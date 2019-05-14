@@ -3,7 +3,7 @@ package com.github.fpopic
 import scala.language.experimental.macros
 import scala.reflect.macros.blackbox
 
-object OneParamWithExprPrintlnQuasiQyotes {
+object OneParamWithExprPrintlnQuasiQuotes {
 
   def helloDebug(param: Any): Unit = macro helloDebugImpl
 
