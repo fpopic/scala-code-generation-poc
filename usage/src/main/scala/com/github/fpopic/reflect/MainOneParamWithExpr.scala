@@ -1,4 +1,6 @@
-package com.github.fpopic
+package com.github.fpopic.reflect
+
+import OneParamWithExprPrintln
 
 object MainOneParamWithExpr {
 

@@ -1,6 +1,5 @@
-package com.github.fpopic
+package com.github.fpopic.reflect
 
-import scala.language.experimental.macros
 import scala.reflect.macros.blackbox
 
 object NoParamsPrintln {
@@ -23,6 +22,3 @@ object NoParamsPrintln {
   }
 
 }
-
-// you can check bytecode by
-// javap -c usage/target/.....\

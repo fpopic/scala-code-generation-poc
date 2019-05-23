@@ -9,7 +9,8 @@ lazy val macros = (project in file(macrosProjectName))
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(
-      "org.scala-lang" % "scala-reflect" % "2.12.8"
+      "org.scala-lang" % "scala-reflect" % "2.12.8",
+      "org.scalameta" %% "scalameta" % "4.1.0"
     ),
     name := macrosProjectName
   )
