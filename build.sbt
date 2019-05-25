@@ -33,9 +33,15 @@ lazy val scalameta = (project in file(scalametaProjectName))
   .withId(scalametaProjectName)
   .settings(
     commonSettings,
-    libraryDependencies ++= Seq(
-      "org.scalameta" %% "scalameta" % "1.8.0" 
-    ),
+    libraryDependencies ++= {
+      val bigQueryVersion = "0.37.0-beta"
+      val gcloudStorageVersion = "1.12.0"
+      Seq(
+        "org.scalameta" %% "scalameta" % "1.8.0",
+        "com.google.cloud" % "google-cloud-bigquery" % bigQueryVersion,
+        "com.google.cloud" % "google-cloud-storage" % gcloudStorageVersion,
+      )
+    },
     addCompilerPlugin("org.scalameta" %% "paradise" % "3.0.0-M8" cross CrossVersion.full),
     name := scalametaProjectName
   )
@@ -46,6 +52,15 @@ lazy val scalametaUsage = (project in file(scalametaUsageProjectName))
   .dependsOn(scalameta)
   .settings(
     commonSettings,
+    libraryDependencies ++= {
+      val bigQueryVersion = "0.37.0-beta"
+      val gcloudStorageVersion = "1.12.0"
+      Seq(
+        "org.scalameta" %% "scalameta" % "1.8.0",
+        "com.google.cloud" % "google-cloud-bigquery" % bigQueryVersion,
+        "com.google.cloud" % "google-cloud-storage" % gcloudStorageVersion,
+      )
+    },
     addCompilerPlugin("org.scalameta" %% "paradise" % "3.0.0-M8" cross CrossVersion.full),
     name := scalametaUsageProjectName,
   )
