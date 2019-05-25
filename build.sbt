@@ -28,6 +28,9 @@ lazy val scalamacrosUsage = (project in file(scalamacrosUsageProjectName))
 
 /////////////
 
+val scalametaParadiseCompilerPlugin =
+  addCompilerPlugin("org.scalameta" %% "paradise" % "3.0.0-M8" cross CrossVersion.full)
+
 val scalametaProjectName = "scala-meta"
 lazy val scalameta = (project in file(scalametaProjectName))
   .withId(scalametaProjectName)
@@ -36,7 +39,7 @@ lazy val scalameta = (project in file(scalametaProjectName))
     libraryDependencies ++= Seq(
       "org.scalameta" %% "scalameta" % "1.8.0" % Provided
     ),
-    addCompilerPlugin("org.scalameta" %% "paradise" % "3.0.0-M8" cross CrossVersion.full),
+    scalametaParadiseCompilerPlugin,
     name := scalametaProjectName
   )
 
@@ -46,7 +49,7 @@ lazy val scalametaUsage = (project in file(scalametaUsageProjectName))
   .dependsOn(scalameta)
   .settings(
     commonSettings,
-    libraryDependencies ++= Seq(),
+    scalametaParadiseCompilerPlugin,
     name := scalametaUsageProjectName,
   )
   
