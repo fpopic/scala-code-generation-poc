@@ -1,1 +1,1 @@
-# scalaV-scalamacros-poc
+# scala-code-generation-poc
