@@ -1,7 +1,5 @@
 package com.github.fpopic.reflect
 
-import OneParamPrintln
-
 object MainOneParam {
 
   def main(args: Array[String]): Unit = {

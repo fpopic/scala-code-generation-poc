@@ -1,7 +1,5 @@
 package com.github.fpopic.reflect
 
-import OneParamWithExprPrintlnQuasiQuotes
-
 object MainOneParamWithExprWithQuasiQuotes {
 
   def main(args: Array[String]): Unit = {
