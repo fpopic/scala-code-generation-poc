@@ -1,6 +1,7 @@
 package com.github.fpopic.reflect
 
 import scala.reflect.macros.blackbox
+import scala.language.experimental.macros
 
 object OneParamPrintln {
 

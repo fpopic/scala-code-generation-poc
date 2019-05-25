@@ -1,24 +1,35 @@
 lazy val commonSettings = Seq(
   version := "0.1",
-  scalaVersion := "2.12.8"
+  scalaVersion := "2.12.6",
+  scalacOptions ++= Seq("-feature")
 )
 
-val macrosProjectName = "macros"
-lazy val macros = (project in file(macrosProjectName))
-  .withId(macrosProjectName)
+val scalametaProjectName = "scala-meta"
+lazy val scalameta = (project in file(scalametaProjectName))
+  .withId(scalametaProjectName)
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(
-      "org.scala-lang" % "scala-reflect" % "2.12.8",
       "org.scalameta" %% "scalameta" % "4.1.0"
     ),
-    name := macrosProjectName
+    name := scalametaProjectName
+  )
+
+val scalamacrosProjectName = "scala-macros"
+lazy val scalamacros = (project in file(scalamacrosProjectName))
+  .withId(scalamacrosProjectName)
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      "org.scala-lang" % "scala-reflect" % "2.12.8"
+    ),
+    name := scalamacrosProjectName
   )
 
 val usageProjectName = "usage"
 lazy val usage = (project in file(usageProjectName))
   .withId(usageProjectName)
-  .dependsOn(macros)
+  .dependsOn(scalamacros, scalameta)
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(),

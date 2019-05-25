@@ -1,1 +1,1 @@
-# scala-macros-poc
+# scala-scalamacros-poc
