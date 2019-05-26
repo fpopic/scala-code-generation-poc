@@ -1,11 +1,19 @@
 package com.github.fpopic.scalameta
 
+import com.google.api.services.bigquery.model.TableRow
+
 import scala.annotation.{StaticAnnotation, compileTimeOnly}
 import scala.language.experimental.macros
 import scala.meta._
 
+trait TableRowConvertable[T] {
+  def toTableRow(t: T): TableRow
+}
+object StringUtil {
+  def uncapitalize(str: String): String = s"${str.head.toLower}${str.tail}"
+}
 @compileTimeOnly("enable macro paradise to expand macro annotations")
-class TableRowConvertable extends StaticAnnotation {
+class ToTableRow extends StaticAnnotation {
 
   inline def apply(defn: Any): Any = meta {
 
@@ -14,11 +22,19 @@ class TableRowConvertable extends StaticAnnotation {
         (cls, obj)
       case q"${cls: Defn.Class};" =>
         // let's create companion object after class if it doesn't exist
-        val newObj =
-          q"""object ${Term.Name(cls.name.value)} {
-                import com.google.api.services.bigquery.model.TableRow
 
-                def toTableRow(x: ${cls.name}): TableRow = {
+        val typeName = cls.name // T
+
+        val termName = Term.Name(cls.name.value) // string value of T
+        val termNameLower = Term.Name(StringUtil.uncapitalize(cls.name.value))
+
+
+        val newObj =
+          q"""object $termName extends TableRowConvertable[${cls.name}] {
+
+              import com.google.api.services.bigquery.model.TableRow
+
+                def toTableRow($termNameLower: $typeName): TableRow = {
                   new TableRow()
                 }
 
@@ -27,7 +43,7 @@ class TableRowConvertable extends StaticAnnotation {
 
         (cls, newObj)
       case _ =>
-        abort("@TableRowConvertable must annotate a class")
+        abort("@ToTableRow must annotate a class")
     }
 
 
@@ -39,7 +55,7 @@ class TableRowConvertable extends StaticAnnotation {
 
     println("Out:")
 
-    println(cls, companion)
+    println(companion)
 
 
     q"$cls; $companion"

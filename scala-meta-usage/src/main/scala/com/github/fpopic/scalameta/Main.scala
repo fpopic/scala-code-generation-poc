@@ -1,6 +1,6 @@
 package com.github.fpopic.scalameta
 
-@TableRowConvertable
+@ToTableRow
 case class XXX(a: Int, b: List[String])
 
 object Main {
@@ -12,4 +12,5 @@ object Main {
       )
     )
   }
+
 }
