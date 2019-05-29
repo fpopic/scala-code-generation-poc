@@ -13,6 +13,8 @@ lazy val scalamacros = (project in file(scalamacrosProjectName))
     libraryDependencies ++= Seq(
       "org.scala-lang" % "scala-reflect" % scalaV
     ),
+    resolvers += Resolver.sonatypeRepo("releases"),
+    addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full),
     name := scalamacrosProjectName
   )
 
@@ -24,6 +26,8 @@ lazy val scalamacrosUsage = (project in file(scalamacrosUsageProjectName))
     commonSettings,
     libraryDependencies ++= Seq(),
     name := scalamacrosUsageProjectName,
+    resolvers += Resolver.sonatypeRepo("releases"),
+    addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full),
   )
 
 /////////////

@@ -18,7 +18,7 @@ object NoParamsPrintln {
 
     // Use `reify` to produce the abstract syntax tree representing a given Scala expression.
     reify {
-      println("Hello World")
+      println("Macros World")
     }
   }
 
