@@ -13,21 +13,19 @@ object Macros {
   def impl(c: blackbox.Context)(annottees: c.Expr[Any]*): c.Expr[Any] = {
     import c.universe._
     val result = annottees.map(_.tree).toList match {
-      case (md@ModuleDef(mods, name, Template(parents, self, body))) :: Nil =>
-        println("Object:")
-        println(md)
-        md
-      case (vd@ValDef(mods, name, type_, rhs)) :: Nil =>
-        println("Val:")
-        println(vd)
-        vd
-      case (cd@q"$mods class $tpname[..$tparams] $ctorMods(...$paramss) extends { ..$earlydefns } with ..$parents { $self => ..$stats }") :: Nil =>
+      case (cd@q"""$mods class $tpname[..$tparams] $ctorMods(...$paramss)
+                extends { ..$earlydefns } with ..$parents { $self => ..$stats }""") :: Nil =>
+
         println("Quasiquote: Class:")
-        println(cd)
-        cd
-      case (cd@ClassDef(mods, name, types, body)) :: Nil =>
-        println("Class:")
-        println(cd)
+
+        paramss foreach {
+          case m: MethodSymbol if m.isCaseAccessor =>
+            println(m.name)
+            m
+          case x =>
+            println("X:" + x)
+        }
+
         cd
     }
     c.Expr[Any](result)
