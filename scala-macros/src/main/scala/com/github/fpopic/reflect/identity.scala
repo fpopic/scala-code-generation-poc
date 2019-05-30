@@ -19,6 +19,10 @@ object Macros {
         println("Val:")
         println(vd)
         vd
+      case (cd@q"$mods class $tpname[..$tparams] $ctorMods(...$paramss) extends { ..$earlydefns } with ..$parents { $self => ..$stats }") :: Nil =>
+        println("Quasiquote: Class:")
+        println(cd)
+        cd
       case (cd@ClassDef(mods, name, types, body)) :: Nil =>
         println("Class:")
         println(cd)
