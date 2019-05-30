@@ -4,6 +4,8 @@ import scala.annotation.{StaticAnnotation, compileTimeOnly}
 import scala.language.experimental.macros
 import scala.reflect.macros.blackbox
 
+// Quasiquotes Syntax:
+//    https://docs.scala-lang.org/overviews/quasiquotes/syntax-summary.html
 
 object Macros {
 
