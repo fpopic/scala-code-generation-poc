@@ -8,7 +8,8 @@ object MappableIteratingUsage {
 
     import Mappable._
 
-    println(MyCC(1, "2").toMap)
+    val m: Map[String, Any] = mapify(MyCC(1, "2"))
 
+    println(m)
   }
 }
