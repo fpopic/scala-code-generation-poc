@@ -8,38 +8,6 @@ lazy val commonSettings = Seq(
   scalaVersion := scalaV
 )
 
-val scalamacrosProjectName = "scala-macros"
-lazy val scalamacros = (project in file(scalamacrosProjectName))
-  .withId(scalamacrosProjectName)
-  .settings(
-    commonSettings,
-    libraryDependencies ++= Seq(
-      "org.scala-lang" % "scala-reflect" % scalaV,
-      "com.google.cloud" % "google-cloud-bigquery" % bigQueryVersion,
-      "com.google.cloud" % "google-cloud-storage" % gcloudStorageVersion,
-    ),
-    resolvers += Resolver.sonatypeRepo("releases"),
-    addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full),
-    name := scalamacrosProjectName
-  )
-
-val scalamacrosUsageProjectName = "scala-macros-usage"
-lazy val scalamacrosUsage = (project in file(scalamacrosUsageProjectName))
-  .withId(scalamacrosUsageProjectName)
-  .dependsOn(scalamacros)
-  .settings(
-    commonSettings,
-    libraryDependencies ++= Seq(
-      "com.google.cloud" % "google-cloud-bigquery" % bigQueryVersion,
-      "com.google.cloud" % "google-cloud-storage" % gcloudStorageVersion,
-    ),
-    name := scalamacrosUsageProjectName,
-    resolvers += Resolver.sonatypeRepo("releases"),
-    addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full),
-  )
-
-/////////////
-
 val scalametaProjectName = "scala-meta"
 lazy val scalameta = (project in file(scalametaProjectName))
   .withId(scalametaProjectName)
