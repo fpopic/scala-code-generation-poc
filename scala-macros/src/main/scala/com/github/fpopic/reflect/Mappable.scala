@@ -35,6 +35,7 @@ object MacroImpl {
       val fValue = TermName(field.name.toString)
       val fType = field.typeSignature
       fType match {
+        case t if t =:= weakTypeOf[List[Double]] => q"$fName -> t.$fValue" // todo
         case t if t =:= weakTypeOf[Int] => q"$fName -> (t.$fValue + 100)"
         case _ => q"$fName -> t.$fValue"
       }
