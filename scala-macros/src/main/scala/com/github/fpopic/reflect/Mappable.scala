@@ -21,7 +21,7 @@ object Mappable {
 
 object MacroImpl {
 
-  // 3 Macro that generates for each call map object
+  // 3 Macro that generates for any case class Mappable implementation
   def materializeMappableImpl[T: c.WeakTypeTag](c: blackbox.Context): c.Expr[Mappable[T]] = {
     import c.universe._
     val tpe = weakTypeOf[T]
@@ -31,9 +31,13 @@ object MacroImpl {
     }.get.paramLists.head
 
     val pairs = fields.map { field =>
-      val name = field.name.decodedName.toString
-      val value = TermName(field.name.toString)
-      q"$name -> t.$value"
+      val fName = field.name.decodedName.toString
+      val fValue = TermName(field.name.toString)
+      val fType = field.typeSignature
+      fType match {
+        case t if t =:= weakTypeOf[Int] => q""""blabla" -> t.$fValue"""
+        case _ => q"$fName -> t.$fValue"
+      }
     }
 
     val ret =
