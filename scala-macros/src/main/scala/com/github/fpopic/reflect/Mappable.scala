@@ -35,7 +35,7 @@ object MacroImpl {
       val fValue = TermName(field.name.toString)
       val fType = field.typeSignature
       fType match {
-        case t if t =:= weakTypeOf[Int] => q""""blabla" -> t.$fValue"""
+        case t if t =:= weakTypeOf[Int] => q"$fName -> (t.$fValue + 100)"
         case _ => q"$fName -> t.$fValue"
       }
     }
@@ -44,7 +44,7 @@ object MacroImpl {
       q"""new Mappable[$tpe] {
              def toMap(t: $tpe): Map[String, Any] = Map(..$pairs)
           }
-        """
+       """
 
     println(s"Ret: $ret")
 
