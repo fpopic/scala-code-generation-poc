@@ -58,6 +58,16 @@ object CsvEncoder {
       case Inr(t) => tEncoder.encode(t)
     }
 
+
+  // implicit def genericEncoder[A](
+  //    implicit
+  //    gen: Generic[A],
+  //    enc: CsvEncoder[gen.Repr] You can't reference a type/val in one param from another enc = ... gen.Repr
+
+  // so move the common thing outside of both params and put it as a type parameter for the method
+  // genericEncoder[A, R] and in trait define
+  // type Aux[A, Repr0] = Generic[A] { type Repr = Repr0 }
+
   // for case class A uses shapeless HList's representation R
   // and creates encoder for R
   implicit def genericEncoder[A, R](
@@ -96,6 +106,9 @@ object Main {
 
     val myClassEncoder = CsvEncoder[MyClass3]
     println(myClassEncoder.encode(MyClass3("a", false, 1)))
-  }
 
+
+  }
 }
+
+
