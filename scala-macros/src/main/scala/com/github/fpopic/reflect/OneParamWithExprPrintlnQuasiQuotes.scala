@@ -13,7 +13,7 @@ object OneParamWithExprPrintlnQuasiQuotes {
     // show() Renders a representation of a reflection artifact as desugared Scala code.
     val paramRepr: String = show(param.tree)
 
-    println(paramRepr) // x.+(1)
+    //FIXME println(paramRepr) // x.+(1)
 
     c.Expr[Unit](q"""println($paramRepr + " = " + $param)""")
   }

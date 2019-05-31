@@ -16,14 +16,13 @@ object Macros {
       case (cd@q"""$mods class $tpname[..$tparams] $ctorMods(...$paramss)
                 extends { ..$earlydefns } with ..$parents { $self => ..$stats }""") :: Nil =>
 
-        println("Quasiquote: Class:")
+        //FIXME println("Quasiquote: Class:")
 
         paramss foreach {
           case m: MethodSymbol if m.isCaseAccessor =>
-            println(m.name)
-            m
+            //FIXME println(m.name)
           case x =>
-            println("X:" + x)
+            //FIXME println("X:" + x)
         }
 
         cd

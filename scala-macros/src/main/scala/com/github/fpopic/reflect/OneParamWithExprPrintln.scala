@@ -14,8 +14,8 @@ object OneParamWithExprPrintln {
     // show() Renders a representation of a reflection artifact as desugared Scala code.
     val paramRepr: String = show(param.tree)
 
-    println(paramRepr) // x.+(1)
-    println(param.actualType) // Int
+    //FIXME println(paramRepr) // x.+(1)
+    //FIXME println(param.actualType) // Int
 
     // We generate Tree manually using tree case classes
     val paramRepTree: Literal = Literal(Constant(paramRepr))
@@ -29,7 +29,8 @@ object OneParamWithExprPrintln {
       // Print: expr = value
       // expr: we just splice the expr
       // value: we just splice the given param
-      println(paramRepExpr.splice + " = " + param.splice)
+
+      //FIXME println(paramRepExpr.splice + " = " + param.splice)
     }
   }
 
