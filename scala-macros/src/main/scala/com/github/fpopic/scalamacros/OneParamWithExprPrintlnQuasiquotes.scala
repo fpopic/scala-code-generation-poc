@@ -1,9 +1,9 @@
-package com.github.fpopic.reflect
+package com.github.fpopic.scalamacros
 
 import scala.language.experimental.macros
 import scala.reflect.macros.blackbox
 
-object OneParamWithExprPrintlnQuasiQuotes {
+object OneParamWithExprPrintlnQuasiquotes {
 
   def helloDebug(param: Any): Unit = macro helloDebugImpl
 

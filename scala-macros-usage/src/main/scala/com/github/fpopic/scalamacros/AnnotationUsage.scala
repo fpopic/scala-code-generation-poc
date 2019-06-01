@@ -1,4 +1,4 @@
-package com.github.fpopic.reflect
+package com.github.fpopic.scalamacros
 
 //@identity
 object MyObject {

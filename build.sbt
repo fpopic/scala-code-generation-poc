@@ -1,11 +1,12 @@
-val scalaV = "2.12.1"
+val scala = "2.13.0-RC3"
 
-val bigQueryVersion = "0.37.0-beta"
-val gcloudStorageVersion = "1.12.0"
+val scalaReflect = "org.scala-lang" % "scala-reflect" %  scala
+val bigQuery = "com.google.cloud" % "google-cloud-bigquery" % "0.37.0-beta"
+val googleCloudStorage = "com.google.cloud" % "google-cloud-storage" % "1.12.0"
 
 lazy val commonSettings = Seq(
   version := "0.1",
-  scalaVersion := scalaV
+  scalaVersion := scala
 )
 
 val scalamacrosProjectName = "scala-macros"
@@ -13,14 +14,8 @@ lazy val scalamacros = (project in file(scalamacrosProjectName))
   .withId(scalamacrosProjectName)
   .settings(
     commonSettings,
-    libraryDependencies ++= Seq(
-      "org.scala-lang" % "scala-reflect" % scalaV,
-      "com.google.cloud" % "google-cloud-bigquery" % bigQueryVersion,
-      "com.google.cloud" % "google-cloud-storage" % gcloudStorageVersion,
-    ),
-    resolvers += Resolver.sonatypeRepo("releases"),
-    addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full),
-    name := scalamacrosProjectName
+    name := scalamacrosProjectName,
+    libraryDependencies ++= scalaReflect :: bigQuery :: googleCloudStorage :: Nil,
   )
 
 val scalamacrosUsageProjectName = "scala-macros-usage"
@@ -29,11 +24,6 @@ lazy val scalamacrosUsage = (project in file(scalamacrosUsageProjectName))
   .dependsOn(scalamacros)
   .settings(
     commonSettings,
-    libraryDependencies ++= Seq(
-      "com.google.cloud" % "google-cloud-bigquery" % bigQueryVersion,
-      "com.google.cloud" % "google-cloud-storage" % gcloudStorageVersion,
-    ),
     name := scalamacrosUsageProjectName,
-    resolvers += Resolver.sonatypeRepo("releases"),
-    addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full),
+    libraryDependencies ++= bigQuery :: googleCloudStorage :: Nil
   )
