@@ -1,29 +1,28 @@
 package com.github.fpopic.scalamacros
 
-import java.sql.Timestamp
+case class N(j: Int, k: Int)
 
-case class A(i: Int, oi: Option[Int], l: List[Int], b: B)
+case class A(i: Int, s: Some[Int], l: List[Int], n: N)
 
-case class B(f: Float, ts: Timestamp)
-
-object MappableIteratingUsage {
+object DefMacroUsage {
 
   def main(args: Array[String]): Unit = {
 
     import Mappable._
 
-    val m: Map[String, Any] = mapify(
+    val a: Map[String, Any] = mapify(
       A(
         i = 1,
-        oi = Option(2),
+        s = Some(2),
         l = List(3, 4),
-        b = B(
-          f = 5.0f,
-          ts = new Timestamp(10000L)
+        n = N(
+          j = 5,
+          k = 7
         )
       )
     )
 
-    println(m)
+    println(a)
+
   }
 }
