@@ -13,16 +13,6 @@ trait Mappable[T] {
 
 object Mappable {
 
-  // 1. Caller initiates type class implicits resolution
-  def mapify[T](t: T)(implicit m: Mappable[T]): Map[String, Any] = m.toMap(t)
-
-  // 2. Implicit method that triggers the macro
-  implicit def materializeMappable[T]: Mappable[T] = macro MacroImpl.materializeMappableImpl[T]
-
-}
-
-object MacroImpl {
-
   // 3. Macro that generates for any case class Mappable implementation
   def materializeMappableImpl[T: c.WeakTypeTag](c: blackbox.Context): c.Expr[Mappable[T]] = {
     import c.universe._
@@ -43,10 +33,10 @@ object MacroImpl {
         case t: Type if t =:= weakTypeOf[Option[Int]] => q"$fName -> t.$fValue.get"
         // arrays
         case t: Type if t =:= weakTypeOf[List[Int]] =>
-//          q"""import scala.collection.JavaConverters._
-//              $fName -> t.$fName.toArray"
-//           """
-        q"$fName -> t.$fValue"
+          //          q"""import scala.collection.JavaConverters._
+          //              $fName -> t.$fName.toArray"
+          //           """
+          q"$fName -> t.$fValue"
         // nested case class   TODO recursion
         case ntpe: Type =>
           val pairs = getPrimaryConstructorMembers(ntpe).foreach { field =>
@@ -70,5 +60,11 @@ object MacroImpl {
 
     c.Expr[Mappable[T]](ret)
   }
+
+  // 2. Implicit method that triggers the macro
+  implicit def materializeMappable[T]: Mappable[T] = macro materializeMappableImpl[T]
+
+  // 1. Caller initiates type class implicits resolution
+  def mapify[T](t: T)(implicit m: Mappable[T]): Map[String, Any] = m.toMap(t)
 
 }
