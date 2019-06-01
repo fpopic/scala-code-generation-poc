@@ -1,5 +1,7 @@
 package com.github.fpopic.scalamacros
 
+import com.google.cloud.FieldSelector.Helper
+
 import scala.language.experimental.macros
 import scala.reflect.macros.blackbox
 
@@ -25,20 +27,18 @@ object Mappable extends MappableLowPriorityImplicits {
 
 trait MappableLowPriorityImplicits {
 
+
   // 3. Macro that generates for any case class Mappable implementation
   def materializeMappableImpl[T: c.WeakTypeTag](c: blackbox.Context): c.Expr[Mappable[T]] = {
     import c.universe._
-    val tpe: c.universe.Type = weakTypeOf[T]
+    val helper = new Helper[c.type](c)
 
+    val tpe = weakTypeOf[T]
     println(s"Mappable: $tpe")
 
-    def getPrimaryConstructorMembers(_tpe: c.Type): Seq[c.Symbol] =
-      _tpe.decls.collectFirst {
-        case m: MethodSymbol if m.isPrimaryConstructor => m
-      }.get.paramLists.head
-
+    // For each constructor field genrate tree that repr. tuple ("name" -> value)
     val mapEntries: Seq[c.Tree] =
-      getPrimaryConstructorMembers(tpe).map { field =>
+      helper.getPrimaryConstructorMembers(tpe).map { field =>
         val fName = field.name.decodedName.toString
         val fTerm = field.name.toTermName
         // doesn't work with tType.decl(field.name).typeSignature
@@ -49,13 +49,14 @@ trait MappableLowPriorityImplicits {
             q"$fName -> (t.$fTerm + 100)"
           case t if t =:= weakTypeOf[Some[Int]] =>
             println(s"$fName : $fType")
-            q"$fName -> t.$fTerm"
+            q"$fName -> t.$fTerm.get"
           case t if t =:= weakTypeOf[List[Int]] =>
             println(s"$fName : $fType")
             q"$fName -> t.$fTerm"
+          // in case field is nested case class
           case n if n.baseClasses.contains(weakTypeOf[Product].typeSymbol) =>
             println(s"$fName : $fType")
-            q"$fName -> implicitly[Mappable[$n]].toMap(t.$fTerm)"
+            q"$fName -> mapify(t.$fTerm)"
           case t =>
             c.abort(c.enclosingPosition, s"Type $t not supported.")
         }
@@ -73,3 +74,18 @@ trait MappableLowPriorityImplicits {
   }
 
 }
+
+// helper class that makes macro code compact
+class Helper[C <: blackbox.Context](val c: C) {
+
+  import c.universe._
+
+  def getPrimaryConstructorMembers(tpe: c.Type): Seq[c.Symbol] =
+    tpe.decls.collectFirst {
+      case m: MethodSymbol if m.isPrimaryConstructor => m
+    }.get.paramLists.head
+
+}
+
+// check byte code
+// javap -c scala-macros-usage/target/scala-2.13.0-M3/classes/com/github/fpopic/scalamacros/A\$.class
