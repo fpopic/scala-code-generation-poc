@@ -1,6 +1,8 @@
-val scala = "2.13.0-RC3"
+val scala = "2.13.0-M3"
 
-val scalaReflect = "org.scala-lang" % "scala-reflect" %  scala
+val scalaReflect = "org.scala-lang" % "scala-reflect" % scala
+val scalaMacrosParadise = "org.scalamacros" %% "paradise" % "2.1.1" // needed only for @AnnotationMacros
+
 val bigQuery = "com.google.cloud" % "google-cloud-bigquery" % "0.37.0-beta"
 val googleCloudStorage = "com.google.cloud" % "google-cloud-storage" % "1.12.0"
 
@@ -16,6 +18,7 @@ lazy val scalamacros = (project in file(scalamacrosProjectName))
     commonSettings,
     name := scalamacrosProjectName,
     libraryDependencies ++= scalaReflect :: bigQuery :: googleCloudStorage :: Nil,
+    addCompilerPlugin(scalaMacrosParadise)
   )
 
 val scalamacrosUsageProjectName = "scala-macros-usage"
@@ -25,5 +28,6 @@ lazy val scalamacrosUsage = (project in file(scalamacrosUsageProjectName))
   .settings(
     commonSettings,
     name := scalamacrosUsageProjectName,
-    libraryDependencies ++= bigQuery :: googleCloudStorage :: Nil
+    libraryDependencies ++= bigQuery :: googleCloudStorage :: Nil,
+    addCompilerPlugin(scalaMacrosParadise)
   )
