@@ -1,7 +1,5 @@
 package com.github.fpopic.scalamacros
 
-import com.google.cloud.FieldSelector.Helper
-
 import scala.language.experimental.macros
 import scala.reflect.macros.blackbox
 
@@ -27,13 +25,13 @@ object Mappable extends MappableLowPriorityImplicits {
 
 trait MappableLowPriorityImplicits {
 
-
   // 3. Macro that generates for any case class Mappable implementation
   def materializeMappableImpl[T: c.WeakTypeTag](c: blackbox.Context): c.Expr[Mappable[T]] = {
     import c.universe._
     val helper = new Helper[c.type](c)
 
-    val tpe = weakTypeOf[T]
+    val tpe: c.universe.Type = weakTypeOf[T] //A
+
     println(s"Mappable: $tpe")
 
     // For each constructor field genrate tree that repr. tuple ("name" -> value)

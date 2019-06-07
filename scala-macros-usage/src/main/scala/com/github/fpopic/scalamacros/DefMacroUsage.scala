@@ -4,6 +4,9 @@ case class N(j: Int, k: Int)
 
 case class A(i: Int, s: Some[Int], l: List[Int], n: N)
 
+case class B(i: Int, l: List[Int], n: N)
+
+
 object DefMacroUsage {
 
   def main(args: Array[String]): Unit = {
