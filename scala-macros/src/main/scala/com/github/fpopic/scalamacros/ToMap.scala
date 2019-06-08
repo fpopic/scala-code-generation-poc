@@ -2,6 +2,7 @@ package com.github.fpopic.scalamacros
 
 import scala.language.experimental.macros
 import scala.language.higherKinds
+import scala.languageFeature.experimental.macros
 import scala.reflect.macros.blackbox
 
 // 0. Define Type Class
@@ -11,7 +12,7 @@ trait ToMap[T] {
 
 }
 
-object ToMap extends MappableLowPriorityImplicits {
+object ToMap extends ToMapLowPriorityImplicits {
 
   // 2. Implicit method that triggers the macro
 
@@ -26,8 +27,7 @@ object ToMap extends MappableLowPriorityImplicits {
   def mapify[T](t: T)(implicit m: ToMap[T]): Map[String, Any] = m.toMap(t)
 }
 
-trait MappableLowPriorityImplicits {
-
+trait ToMapLowPriorityImplicits {
 
   // 3. Macro that generates for any case class ToMap implementation
   def materializeMappableImpl[T: c.WeakTypeTag](c: blackbox.Context): c.Expr[ToMap[T]] = {
