@@ -1,40 +1,41 @@
 package com.github.fpopic.scalamacros
 
-import com.google.cloud.FieldSelector.Helper
-
 import scala.language.experimental.macros
+import scala.language.higherKinds
 import scala.reflect.macros.blackbox
 
 // 0. Define Type Class
-trait Mappable[T] {
+trait ToMap[T] {
 
   def toMap(t: T): Map[String, Any]
 
 }
 
-object Mappable extends MappableLowPriorityImplicits {
+object ToMap extends MappableLowPriorityImplicits {
 
   // 2. Implicit method that triggers the macro
 
   // HighPriorityImplicits
+  // I can now only make implicits for whole case class but not for fields,
+  // for them i need a new type class or in pattern matching in mapEntries code add cases
 
   // LowPriorityMacros
-  implicit def caseClassMappable[T]: Mappable[T] = macro materializeMappableImpl[T]
+  implicit def caseClassMappable[T]: ToMap[T] = macro materializeMappableImpl[T]
 
   // 1. Caller initiates type class implicits resolution
-  def mapify[T](t: T)(implicit m: Mappable[T]): Map[String, Any] = m.toMap(t)
+  def mapify[T](t: T)(implicit m: ToMap[T]): Map[String, Any] = m.toMap(t)
 }
 
 trait MappableLowPriorityImplicits {
 
 
-  // 3. Macro that generates for any case class Mappable implementation
-  def materializeMappableImpl[T: c.WeakTypeTag](c: blackbox.Context): c.Expr[Mappable[T]] = {
+  // 3. Macro that generates for any case class ToMap implementation
+  def materializeMappableImpl[T: c.WeakTypeTag](c: blackbox.Context): c.Expr[ToMap[T]] = {
     import c.universe._
     val helper = new Helper[c.type](c)
 
     val tpe = weakTypeOf[T]
-    println(s"Mappable: $tpe")
+    println(s"ToMap: $tpe")
 
     // For each constructor field genrate tree that repr. tuple ("name" -> value)
     val mapEntries: Seq[c.Tree] =
@@ -58,19 +59,26 @@ trait MappableLowPriorityImplicits {
             println(s"$fName : $fType")
             q"$fName -> mapify(t.$fTerm)"
           case t =>
-            c.abort(c.enclosingPosition, s"Type $t not supported.")
+            try {
+              // default ones
+            }
+            catch {
+              case e: Exception =>
+                c.abort(c.enclosingPosition, s"Type $t is not supported.")
+            }
+            q""
         }
       }
 
     val ret =
-      q"""new Mappable[$tpe] {
+      q"""new ToMap[$tpe] {
              def toMap(t: $tpe): Map[String, Any] = Map(..$mapEntries)
           }
        """
 
     println(s"Ret: $ret")
 
-    c.Expr[Mappable[T]](ret)
+    c.Expr[ToMap[T]](ret)
   }
 
 }

@@ -8,7 +8,7 @@ object DefMacroUsage {
 
   def main(args: Array[String]): Unit = {
 
-    import Mappable._
+    import ToMap._
 
     val a: Map[String, Any] = mapify(
       A(
