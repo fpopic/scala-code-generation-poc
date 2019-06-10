@@ -13,7 +13,6 @@ trait ToMap[T] {
 }
 
 object ToMap extends ToMapLowPriorityImplicits {
-
   // 2. Implicit method that triggers the macro
 
   // HighPriorityImplicits
@@ -51,6 +50,12 @@ trait ToMapLowPriorityImplicits {
           case t if t =:= weakTypeOf[Some[Int]] =>
             println(s"$fName : $fType")
             q"$fName -> t.$fTerm.get"
+          case t if t <:< weakTypeOf[Option[_]] =>
+            // FIXME
+            q"""if ($fTerm.isDefined)
+                  $fName -> $fTerm.get
+                else ""
+              """
           case t if t =:= weakTypeOf[List[Int]] =>
             println(s"$fName : $fType")
             q"$fName -> t.$fTerm"

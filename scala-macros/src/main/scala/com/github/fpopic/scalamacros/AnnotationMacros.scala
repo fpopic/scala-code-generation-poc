@@ -21,10 +21,8 @@ object Macros {
         //println("Quasiquote: Class:")
 
         paramss foreach {
-          case m: MethodSymbol if m.isCaseAccessor =>
-          //println(m.name)
-          case x =>
-          //println("X:" + x)
+          case m: MethodSymbol if m.isCaseAccessor => //println(m.name)
+          case x => //println("X:" + x)
         }
 
         cd

@@ -1,12 +1,14 @@
 package com.github.fpopic.scalamacros
 
+
 //@identity
 object MyObject {
 
   @identity
   case class MyCaseClass(x: Int, y: List[String])
 
-//  @identity
+  //  @identity
+
   val myVal = 1
 
 }
