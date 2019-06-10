@@ -21,7 +21,7 @@ lazy val scalamacros = (project in file(scalamacrosProjectName))
   .settings(
     commonSettings,
     name := scalamacrosProjectName,
-    libraryDependencies ++= scalaReflect :: Nil
+    libraryDependencies ++= scalaReflect :: Nil,
   )
 
 val scalamacrosUsageProjectName = "scala-macros-usage"
@@ -30,5 +30,5 @@ lazy val scalamacrosUsage = (project in file(scalamacrosUsageProjectName))
   .dependsOn(scalamacros)
   .settings(
     commonSettings,
-    name := scalamacrosUsageProjectName
+    name := scalamacrosUsageProjectName,
   )
