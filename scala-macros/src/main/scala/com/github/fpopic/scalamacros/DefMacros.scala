@@ -31,7 +31,7 @@ trait ToMapLowPriorityImplicits {
   // 3. Macro that generates for any case class ToMap implementation
   def materializeMappableImpl[T: c.WeakTypeTag](c: blackbox.Context): c.Expr[ToMap[T]] = {
     import c.universe._
-    val helper = new Helper[c.type](c)
+    val helper = new MacrosHelper[c.type](c)
 
     val tpe = weakTypeOf[T]
     println(s"ToMap: $tpe")
@@ -88,17 +88,7 @@ trait ToMapLowPriorityImplicits {
 
 }
 
-// helper class that makes macro code compact
-class Helper[C <: blackbox.Context](val c: C) {
 
-  import c.universe._
-
-  def getPrimaryConstructorMembers(tpe: c.Type): Seq[c.Symbol] =
-    tpe.decls.collectFirst {
-      case m: MethodSymbol if m.isPrimaryConstructor => m
-    }.get.paramLists.head
-
-}
 
 // check byte code
 // javap -c scala-macros-usage/target/scala-2.13.0-M3/classes/com/github/fpopic/scalamacros/A\$.class
