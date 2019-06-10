@@ -17,7 +17,7 @@ object MyObject {
 class MyClass(_c: Int) {
 
   val c: Int = _c
-
+  
 }
 
 
