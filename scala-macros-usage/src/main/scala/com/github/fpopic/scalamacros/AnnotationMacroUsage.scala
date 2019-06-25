@@ -4,7 +4,7 @@ package com.github.fpopic.scalamacros
 //@identity
 object MyObject {
 
-  @identity
+  @identity(i=123)
   case class MyCaseClass(x: Int, y: List[String])
 
   //  @identity
@@ -21,5 +21,5 @@ class MyClass(_c: Int) {
 }
 
 
-@identity
+@identity(i=456)
 case class MyCaseClass2(x: Int, y: List[String])

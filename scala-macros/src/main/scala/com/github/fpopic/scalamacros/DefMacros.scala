@@ -1,8 +1,5 @@
 package com.github.fpopic.scalamacros
 
-import scala.language.experimental.macros
-import scala.language.higherKinds
-import scala.languageFeature.experimental.macros
 import scala.reflect.macros.blackbox
 
 // 0. Define Type Class
@@ -34,13 +31,19 @@ trait ToMapLowPriorityImplicits {
     val helper = new MacrosHelper[c.type](c)
 
     val tpe = weakTypeOf[T]
-    println(s"ToMap: $tpe")
+    println(s"\nDefMacro: $tpe")
 
     // For each constructor field genrate tree that repr. tuple ("name" -> value)
     val mapEntries: Seq[c.Tree] =
       helper.getPrimaryConstructorMembers(tpe).map { field =>
         val fName = field.name.decodedName.toString
         val fTerm = field.name.toTermName
+
+        field.annotations.foreach { a =>
+          println("Annotations in def macro: " + a.tree.tpe.toString)
+          a
+        }
+
         // doesn't work with tType.decl(field.name).typeSignature
         val fType = field.typeSignature
         fType match {
@@ -68,8 +71,7 @@ trait ToMapLowPriorityImplicits {
               // default ones
             }
             catch {
-              case e: Exception =>
-                c.abort(c.enclosingPosition, s"Type $t is not supported.")
+              case _: Exception => c.abort(c.enclosingPosition, s"Type $t is not supported.")
             }
             q""
         }
@@ -87,7 +89,6 @@ trait ToMapLowPriorityImplicits {
   }
 
 }
-
 
 
 // check byte code

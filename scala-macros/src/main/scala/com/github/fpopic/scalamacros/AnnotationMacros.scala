@@ -1,7 +1,7 @@
 package com.github.fpopic.scalamacros
 
 import scala.annotation.{StaticAnnotation, compileTimeOnly}
-import scala.language.experimental.macros
+import scala.reflect.api.Trees
 import scala.reflect.macros.blackbox
 
 
@@ -14,28 +14,41 @@ object Macros {
   // annottees -> all thing where we put @identity
   def impl(c: blackbox.Context)(annottees: c.Tree*): c.Tree = {
     import c.universe._
-    val ret = annottees.toList match {
-      case (cd@q"""$mods class $tpname[..$tparams] $ctorMods(...$paramss)
-                extends { ..$earlydefns } with ..$parents { $self => ..$stats }""") :: Nil =>
+    val helper = new MacrosHelper[c.type](c)
 
-        //println("Quasiquote: Class:")
+    println("\nAnnotationMacro:")
 
-        paramss foreach {
-          case m: MethodSymbol if m.isCaseAccessor => //println(m.name)
-          case x => //println("X:" + x)
-        }
-
-        cd
+    // To extract annotation parameter
+    val i: Int = c.prefix.tree match {
+      case q@q"new identity(i=$i)" =>
+        helper.evalTree[Int](i)
+      case _ => 0
     }
 
-    println("identiy: " + ret)
-    ret
+    println(s"Parameter i:$i")
+
+    val inputs = annottees.toList
+
+    val (annottee, expandees) = inputs match {
+      case (param: ValDef) :: (rest@_ :: _) =>
+        (param, rest)
+
+      case (param: TypeDef) :: (rest@_ :: _) =>
+        (param, rest)
+
+      case _ =>
+        (EmptyTree, inputs)
+    }
+
+    println("XX" + (annottee, expandees))
+
+    Block(expandees, Literal(Constant(())))
   }
 
 }
 
 // 0. Define anotation
 @compileTimeOnly("enable macro paradise to expand macro annotations")
-class identity extends StaticAnnotation {
+class identity(i: Int) extends StaticAnnotation {
   def macroTransform(annottees: Any*): Any = macro Macros.impl
 }
