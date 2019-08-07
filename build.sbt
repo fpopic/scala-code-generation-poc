@@ -14,7 +14,6 @@ lazy val root = (project in file("."))
     commonSettings,
     name := rootProjectName
   )
-  .enablePlugins(DottyPlugin)
 
 
 val dottyMacrosProjectName = "dotty-macros"
@@ -24,7 +23,6 @@ lazy val scalamacros = (project in file(dottyMacrosProjectName))
     commonSettings,
     name := dottyMacrosProjectName
   )
-  .enablePlugins(DottyPlugin)
 
 val dottyMacrosUsageProjectName = "dotty-macros-usage"
 lazy val scalamacrosUsage = (project in file(dottyMacrosUsageProjectName))
@@ -34,4 +32,3 @@ lazy val scalamacrosUsage = (project in file(dottyMacrosUsageProjectName))
     commonSettings,
     name := dottyMacrosUsageProjectName
   )
-  .enablePlugins(DottyPlugin)
