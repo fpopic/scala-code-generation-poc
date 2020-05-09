@@ -1,34 +1,7 @@
-val scala = "0.17.0-RC1"
-
-lazy val commonSettings = Seq(
-  version := "0.1",
-  scalaVersion := scala,
-  scalacOptions ++= "-usejavacp" :: Nil
-)
-
-val rootProjectName = "root"
-lazy val root = (project in file("."))
-  .withId(rootProjectName)
-  .aggregate(scalamacros, scalamacrosUsage)
+lazy val root = project
+  .in(file("."))
   .settings(
-    commonSettings,
-    name := rootProjectName
-  )
-
-
-val dottyMacrosProjectName = "dotty-macros"
-lazy val scalamacros = (project in file(dottyMacrosProjectName))
-  .withId(dottyMacrosProjectName)
-  .settings(
-    commonSettings,
-    name := dottyMacrosProjectName
-  )
-
-val dottyMacrosUsageProjectName = "dotty-macros-usage"
-lazy val scalamacrosUsage = (project in file(dottyMacrosUsageProjectName))
-  .withId(dottyMacrosUsageProjectName)
-  .dependsOn(scalamacros)
-  .settings(
-    commonSettings,
-    name := dottyMacrosUsageProjectName
+    name := "dotty-macros",
+    version := "0.1.0",
+    scalaVersion := "0.23.0-RC1",
   )
