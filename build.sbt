@@ -2,11 +2,10 @@ name := "generic-programming-shapeless"
 
 version := "0.1"
 
-scalaVersion := "2.12.6"
+scalaVersion := "2.13.5"
 
-libraryDependencies += "com.chuusai" %% "shapeless" % "2.3.3"
+libraryDependencies += "com.chuusai" %% "shapeless" % "2.3.4"
 
-PB.targets in Compile := Seq(
-  scalapb.gen() -> (sourceManaged in Compile).value
+Compile / PB.targets  := Seq(
+  scalapb.gen() -> (Compile / sourceManaged).value
 )
-
