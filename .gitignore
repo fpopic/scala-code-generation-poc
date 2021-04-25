@@ -2,3 +2,6 @@
 target/
 .metals/
 .bloop/
+.bsp/
+*.class
+*.iml

@@ -1,40 +1,27 @@
-val scala = "2.13.0-M3"
-val scalaReflect = "org.scala-lang" % "scala-reflect" % scala
-val scalaMacrosParadise = "org.scalamacros" %% "paradise" % "2.1.1"
+import Dependencies._
+Global / onChangedBuildSource := ReloadOnSourceChanges
 
-lazy val commonSettings = Seq(
-  version := "0.1",
-  scalaVersion := scala,
-  //  scalacOptions ++= "-usejavacp" :: "-Ymacro-annotations" :: Nil
-  scalacOptions ++= "-Dscala.usejavacp=true" :: "-language:experimental.macros" :: Nil
+inThisBuild(
+  Seq(
+    version := "0.1",
+    scalaVersion := "2.13.5",
+    scalacOptions ++= "-Ymacro-annotations" :: "-language:experimental.macros" :: Nil
+  )
 )
 
-val rootProjectName = "root"
 lazy val root = (project in file("."))
-  .withId(rootProjectName)
-  .aggregate(scalamacros, scalamacrosUsage)
+  .aggregate(`scala-macros`, `scala-macros-usage`)
+
+lazy val `scala-macros` = (project in file("scala-macros"))
   .settings(
-    commonSettings,
-    name := rootProjectName,
-    addCompilerPlugin(scalaMacrosParadise)
+    libraryDependencies ++= Seq(
+      scalaReflect % scalaVersion.value,
+      scalaPbRuntime
+    )
   )
 
-val scalamacrosProjectName = "scala-macros"
-lazy val scalamacros = (project in file(scalamacrosProjectName))
-  .withId(scalamacrosProjectName)
+lazy val `scala-macros-usage` = (project in file("scala-macros-usage"))
+  .dependsOn(`scala-macros`)
   .settings(
-    commonSettings,
-    name := scalamacrosProjectName,
-    libraryDependencies ++= scalaReflect :: Nil,
-    addCompilerPlugin(scalaMacrosParadise)
-  )
-
-val scalamacrosUsageProjectName = "scala-macros-usage"
-lazy val scalamacrosUsage = (project in file(scalamacrosUsageProjectName))
-  .withId(scalamacrosUsageProjectName)
-  .dependsOn(scalamacros)
-  .settings(
-    commonSettings,
-    name := scalamacrosUsageProjectName,
-    addCompilerPlugin(scalaMacrosParadise)
+    libraryDependencies ++= scalaPbRuntime :: Nil
   )
