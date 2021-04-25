@@ -16,12 +16,18 @@ lazy val `scala-macros` = (project in file("scala-macros"))
   .settings(
     libraryDependencies ++= Seq(
       scalaReflect % scalaVersion.value,
-      scalaPbRuntime
+      scalaPbRuntime,
+      beamSdksJavaCore,
+      beamRunnersDirectJava
     )
   )
 
 lazy val `scala-macros-usage` = (project in file("scala-macros-usage"))
   .dependsOn(`scala-macros`)
   .settings(
-    libraryDependencies ++= scalaPbRuntime :: Nil
+    libraryDependencies ++= Seq(
+      scalaPbRuntime,
+      beamSdksJavaCore,
+      beamRunnersDirectJava
+    )
   )

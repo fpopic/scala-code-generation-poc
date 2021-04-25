@@ -33,6 +33,4 @@ object MessageSerializer {
     def serializedSize(b: Boolean): Int = 1
   }
 
-  // todo with shapeless I can have field serializer
-  // todo with macros I could have full message serializer
 }
