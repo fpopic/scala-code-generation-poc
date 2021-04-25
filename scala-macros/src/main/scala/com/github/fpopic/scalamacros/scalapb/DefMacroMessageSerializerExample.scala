@@ -2,7 +2,6 @@ package com.github.fpopic.scalamacros.scalapb
 
 import com.google.protobuf.CodedOutputStream
 
-
 trait MessageSerializer[T] {
   def toByteArray(message: T): Array[Byte] = {
     val size = serializedSize(message)

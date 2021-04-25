@@ -38,8 +38,8 @@ jobs:
           key: ${{ runner.os }}-sbt-cache-v1-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('project/build.properties') }}
 
       - name: Compile tests
-        run: sbt Test / +compile
+        run: sbt "+Test / compile"
       - name: Run tests
-        run: sbt +test
+        run: sbt "+Test / test"
       - name: Compile source
-        run: sbt +compile
+        run: sbt "+compile"

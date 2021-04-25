@@ -69,8 +69,7 @@ trait ToMapLowPriorityImplicits {
           case t =>
             try {
               // default ones
-            }
-            catch {
+            } catch {
               case _: Exception => c.abort(c.enclosingPosition, s"Type $t is not supported.")
             }
             q""
@@ -89,7 +88,6 @@ trait ToMapLowPriorityImplicits {
   }
 
 }
-
 
 // check byte code
 // javap -c scala-macros-usage/target/scala-2.13.0-M3/classes/com/github/fpopic/scalamacros/A\$.class

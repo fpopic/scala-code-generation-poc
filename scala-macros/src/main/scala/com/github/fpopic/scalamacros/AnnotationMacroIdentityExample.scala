@@ -4,7 +4,6 @@ import scala.annotation.{StaticAnnotation, compileTimeOnly}
 import scala.reflect.api.Trees
 import scala.reflect.macros.blackbox
 
-
 // Quasiquotes Syntax:
 //    https://docs.scala-lang.org/overviews/quasiquotes/syntax-summary.html
 
@@ -20,7 +19,7 @@ object Macros {
 
     // To extract annotation parameter
     val i: Int = c.prefix.tree match {
-      case q@q"new identity(i=$i)" =>
+      case q @ q"new identity(i=$i)" =>
         helper.evalTree[Int](i)
       case _ => 0
     }
@@ -30,10 +29,10 @@ object Macros {
     val inputs = annottees.toList
 
     val (annottee, expandees) = inputs match {
-      case (param: ValDef) :: (rest@_ :: _) =>
+      case (param: ValDef) :: (rest @ _ :: _) =>
         (param, rest)
 
-      case (param: TypeDef) :: (rest@_ :: _) =>
+      case (param: TypeDef) :: (rest @ _ :: _) =>
         (param, rest)
 
       case _ =>

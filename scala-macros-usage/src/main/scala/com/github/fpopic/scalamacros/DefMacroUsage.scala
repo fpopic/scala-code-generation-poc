@@ -4,7 +4,6 @@ case class N(j: Int, @identity(i = 5) k: Int)
 
 case class A(i: Int, s: Some[Int], l: List[Int], n: N)
 
-
 object DefMacroUsage {
 
   def main(args: Array[String]): Unit = {
