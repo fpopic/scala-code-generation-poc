@@ -9,8 +9,7 @@ object DefMacroCoderUsage {
 
   def main(args: Array[String]): Unit = {
 
-    import com.github.fpopic.scalamacros.beam.DefMacroCoder._
-    import com.github.fpopic.scalamacros.beam.DefMacroCoder.{stringCoder, intCoder, listCoder}
+    import com.github.fpopic.scalamacros.beam.DefMacroCoder.productCoder
     case class Pojo(s: String, i: Int, l: List[Int])
     // TODO try with nested class
 

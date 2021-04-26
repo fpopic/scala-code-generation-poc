@@ -65,14 +65,8 @@ trait LowPriorityMacros {
         val fieldType = field.typeSignature
         val fieldTerm = field.asTerm
 
-        val fieldEncodeExpression =
-          q"_root_.scala.Predef.implicitly[${fieldType}].encode(value.${fieldTerm}, os)"
-
-        val fieldDecodeExpression =
-          q"${field.asTerm} = _root_.scala.Predef.implicitly[Coder[${fieldType}]].decode(is)"
-
-        val innerType = field.typeSignature.finalResultType // inneryType is String
-        val typeClassType: Type = typeOf(typeTag[Coder[T]]) // typeClassType is Coder[T]
+        val innerType = field.typeSignature.finalResultType // inneryType for field is String (we call it F)
+        val typeClassType: Type = typeOf(typeTag[Coder[innerType.type]]) //FIXME typeClassType is Coder[F], not T
         val appliedFieldType = appliedType(typeClassType, innerType) // we need Coder[String]
 
         val foundFieldImplicitCoder = c.inferImplicitValue(appliedFieldType)
@@ -80,8 +74,15 @@ trait LowPriorityMacros {
           if (foundFieldImplicitCoder.isEmpty) {
             c.abort(c.enclosingPosition, s"Implicit search failed for ${appliedFieldType}")
           } else {
-            q"val ${TermName(c.freshName())}: ${innerType} = ${foundFieldImplicitCoder}"
+            q"implicit val ${TermName(c.freshName())}: ${appliedFieldType} = ${foundFieldImplicitCoder}"
           }
+
+        val fieldEncodeExpression = //FIXME use found coder here instead of implicitly
+          q"_root_.scala.Predef.implicitly[Coder[${fieldType}]].encode(value.${fieldTerm}, os)"
+
+        val fieldDecodeExpression = //FIXME user found coder here instead of implicitly
+          q"${field.asTerm} = _root_.scala.Predef.implicitly[Coder[${fieldType}]].decode(is)"
+
         (fieldEncodeExpression, fieldDecodeExpression, fieldImplicitCoderExpression)
       }
 
