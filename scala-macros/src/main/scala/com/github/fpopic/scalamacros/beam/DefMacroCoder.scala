@@ -10,10 +10,11 @@ import scala.jdk.CollectionConverters._
 
 object DefMacroCoder extends LowPriorityMacros {
 
+  // Coder[T] will be my typeclass
   def of[T](implicit c: Coder[T]): Coder[T] = c
 
-  // HighPriorityMacros
-
+  /* HighPriority */
+  // some typeclass implementations
   implicit val stringCoder: Coder[String] = StringUtf8Coder.of()
 
   implicit val intCoder: Coder[Int] = new Coder[Int] {
@@ -42,81 +43,76 @@ object DefMacroCoder extends LowPriorityMacros {
     override def verifyDeterministic(): Unit = baseCoder.verifyDeterministic()
   }
 
-  // invoke macro
+  /* LowPriority */
   implicit def productCoder[P <: Product]: Coder[P] = macro materializeProductCoder[P]
 }
 
-//noinspection RedundantBlock
 trait LowPriorityMacros {
 
   import scala.reflect.macros.blackbox
 
-  def materializeProductCoder[T: c.WeakTypeTag](c: blackbox.Context): c.Expr[Coder[T]] = {
+  def materializeProductCoder[P: c.WeakTypeTag](c: blackbox.Context): c.Expr[Coder[P]] = {
     import c.universe._
-    val tpe = weakTypeOf[T]
-
-    println(s"~> Building DefMacroCoder[${tpe}] ...")
-
+    val tpe = c.weakTypeOf[P]
     val helper = new MacrosHelper[c.type](c)
 
-    // For each constructor field generate tree that repr. tuple ("name" -> value)
-    val expressions: Seq[(c.Tree, c.Tree, c.Tree)] =
+    val expressions =
       helper.getPrimaryConstructorMembers(tpe).map { field =>
-        val fieldType = field.typeSignature
-        val fieldTerm = field.asTerm
+        val fieldTerm = field.asTerm.name // e.g. value.s (for now just s)
+        val fieldType = field.typeSignature.finalResultType // e.g. String
 
-        val innerType = field.typeSignature.finalResultType // inneryType for field is String (we call it F)
-        val typeClassType: Type = typeOf(typeTag[Coder[innerType.type]]) //FIXME typeClassType is Coder[F], not T
-        val appliedFieldType = appliedType(typeClassType, innerType) // we need Coder[String]
+        val fieldCoderName = c.freshName(TermName("coder")) // e.g. give friendly name coder$...
+        val fieldCoderInstance = // e.g. finds instance of Coder[String]
+          c.typecheck(
+            tree = q"""_root_.scala.Predef.implicitly[org.apache.beam.sdk.coders.Coder[${fieldType}]]""",
+            silent = false
+          )
 
-        val foundFieldImplicitCoder = c.inferImplicitValue(appliedFieldType)
-        val fieldImplicitCoderExpression =
-          if (foundFieldImplicitCoder.isEmpty) {
-            c.abort(c.enclosingPosition, s"Implicit search failed for ${appliedFieldType}")
-          } else {
-            q"implicit val ${TermName(c.freshName())}: ${appliedFieldType} = ${foundFieldImplicitCoder}"
-          }
+        val fieldCoderExpression =
+          q"private val ${fieldCoderName}: org.apache.beam.sdk.coders.Coder[${fieldType}] = ${fieldCoderInstance}"
 
-        val fieldEncodeExpression = //FIXME use found coder here instead of implicitly
-          q"_root_.scala.Predef.implicitly[Coder[${fieldType}]].encode(value.${fieldTerm}, os)"
+        val fieldEncodeExpression =
+          q"${fieldCoderName}.encode(value.${fieldTerm}, os)" // replace with full relative name (with dots) instead of value
 
-        val fieldDecodeExpression = //FIXME user found coder here instead of implicitly
-          q"${field.asTerm} = _root_.scala.Predef.implicitly[Coder[${fieldType}]].decode(is)"
+        val fieldDecodeExpression =
+          q"${field.asTerm} = ${fieldCoderName}.decode(is)"
 
-        (fieldEncodeExpression, fieldDecodeExpression, fieldImplicitCoderExpression)
+        (fieldCoderExpression, fieldEncodeExpression, fieldDecodeExpression)
       }
 
-    val implicitExpressions = expressions.map(_._3).distinct
-    val coderEncodeExpresions = expressions.map(_._1)
-    val coderDecodeExpresions = expressions.map(_._2)
+    val fieldCodersExpression = expressions.map(_._1).distinct
+    val coderEncodeExpresions = expressions.map(_._2)
+    val coderDecodeExpresions = expressions.map(_._3)
 
-    val classTypeName = TypeName(c.freshName())
     val coderExpression =
-      q"""class ${classTypeName} extends org.apache.beam.sdk.coders.Coder[${tpe}] {
+      q"""{
+            new org.apache.beam.sdk.coders.Coder[${tpe}] {
 
-            ..${implicitExpressions}
-            
-            override def encode(value: ${tpe}, os: java.io.OutputStream): Unit = {
-              ..${coderEncodeExpresions}
+              {import ${c.prefix}._}
+
+              ..${fieldCodersExpression}
+
+              override def encode(value: ${tpe}, os: java.io.OutputStream): _root_.scala.Unit = {
+                ..${coderEncodeExpresions}
+              }
+
+              override def decode(is: java.io.InputStream): ${tpe} = {
+                ${tpe.typeConstructor}(
+                  ..${coderDecodeExpresions}
+                )
+              }
+
+              override def getCoderArguments: java.util.List[_ <: org.apache.beam.sdk.coders.Coder[_]] = {
+                java.util.Collections.emptyList
+              }
+
+              override def verifyDeterministic(): _root_.scala.Unit = ()
             }
-            
-            override def decode(is: java.io.InputStream): ${tpe} = {
-              ${tpe.typeConstructor}(
-                ..${coderDecodeExpresions}
-              )
-            }
-
-            override def getCoderArguments: java.util.List[_ <: org.apache.beam.sdk.coders.Coder[_]] = java.util.Collections.emptyList
-
-            override def verifyDeterministic(): Unit = ()
           }
-
-          new ${classTypeName}
       """
 
     val ret = coderExpression
-    println(ret)
-    c.Expr[Coder[T]](ret)
+    c.Expr[Coder[P]](ret)
   }
 
 }

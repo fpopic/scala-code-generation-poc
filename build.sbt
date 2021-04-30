@@ -5,7 +5,14 @@ inThisBuild(
   Seq(
     version := "0.1",
     scalaVersion := "2.13.5",
-    scalacOptions ++= "-Ymacro-annotations" :: "-language:experimental.macros" :: Nil
+    scalacOptions ++= Seq(
+      "-Ymacro-annotations",
+      "-language:experimental.macros",
+      //"-Xlog-implicits",
+      "-Ymacro-debug-lite"
+    ),
+    // for nicer error messages
+    addCompilerPlugin("io.tryp" % "splain" % "0.5.8" cross CrossVersion.patch)
   )
 )
 
@@ -28,6 +35,7 @@ lazy val `scala-macros-usage` = (project in file("scala-macros-usage"))
     libraryDependencies ++= Seq(
       scalaPbRuntime,
       beamSdksJavaCore,
-      beamRunnersDirectJava
+      beamRunnersDirectJava,
+      scalaTest
     )
   )
