@@ -97,7 +97,7 @@ trait LowPriorityMacros {
               }
 
               override def decode(is: java.io.InputStream): ${tpe} = {
-                ${tpe.typeConstructor}(
+                new ${tpe}(
                   ..${coderDecodeExpresions}
                 )
               }
