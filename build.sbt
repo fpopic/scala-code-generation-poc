@@ -4,15 +4,16 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 inThisBuild(
   Seq(
     version := "0.1",
-    scalaVersion := "2.13.5",
+    scalaVersion := "2.13.6",
     scalacOptions ++= Seq(
       "-Ymacro-annotations",
       "-language:experimental.macros",
       //"-Xlog-implicits",
-      "-Ymacro-debug-lite"
-    ),
-    // for nicer error messages
-    addCompilerPlugin("io.tryp" % "splain" % "0.5.8" cross CrossVersion.patch)
+      "-Ymacro-debug-lite",
+      // for nicer error messages
+      //"-Vimplicits",
+      "-Vtype-diffs"
+    )
   )
 )
 
